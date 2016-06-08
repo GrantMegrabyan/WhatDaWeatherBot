@@ -11,6 +11,13 @@ namespace WhatDaWeatherBot
     [BotAuthentication]
     public class MessagesController : ApiController
     {
+        private readonly ILuisService _luisService;
+
+        public MessagesController(ILuisService luisService)
+        {
+            _luisService = luisService;
+        }
+
         /// <summary>
         /// POST: api/Messages
         /// Receive a message from a user and reply to it
@@ -19,13 +26,7 @@ namespace WhatDaWeatherBot
         {
             if (message.Type == "Message")
             {
-                var luisModel = new LuisModelAttribute(
-                    ConfigurationManager.AppSettings["LuisAppKey"],
-                    ConfigurationManager.AppSettings["LuisSubscriptionKey"]);
-
-                var luisService = new LuisService(luisModel);
-
-                return await Conversation.SendAsync(message, () => new WeatherDialog(luisService));
+                return await Conversation.SendAsync(message, () => new WeatherDialog(_luisService));
             }
             else
             {
