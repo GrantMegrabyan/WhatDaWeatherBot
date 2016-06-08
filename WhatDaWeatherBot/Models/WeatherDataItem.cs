@@ -1,6 +1,6 @@
 using System;
 
-namespace WhatDaWeatherBot.Weather
+namespace WhatDaWeatherBot.Models
 {
     public class WeatherDataItem
     {

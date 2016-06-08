@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Web;
+using WhatDaWeatherBot.Models;
 
 namespace WhatDaWeatherBot.Weather
 {
@@ -27,37 +28,14 @@ namespace WhatDaWeatherBot.Weather
             else
             {
                 var currentWeather = await service.GetCurrentWeather(
-                query.Location, CancellationToken.None);
+                    query.Location, CancellationToken.None);
 
                 var message = responseBuilder.Build(currentWeather);
 
                 return message;
             }
         }
-
-        public static async Task<string> CheckWeather(string locationQuery)
-        {
-            var service = GetWeatherService();
-            var responseBuilder = GetResponseBuilder();
-
-            var weatherConditions = await service.CurrentConditions(
-                locationQuery, CancellationToken.None);
-            var message = responseBuilder.Build(weatherConditions);
-
-            return message;
-        }
-
-        public static async Task<string> GetForecast(string location)
-        {
-            var service = GetWeatherService();
-            var responseBuilder = GetResponseBuilder();
-
-            var forecast = await service.CheckWeather(location);
-            var message = responseBuilder.Build(forecast);
-
-            return message;
-        }
-
+        
         private static WeatherService GetWeatherService()
         {
             var owmKey = ConfigurationManager.AppSettings["OwmKey"];

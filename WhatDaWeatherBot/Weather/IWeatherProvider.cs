@@ -1,5 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
+using WhatDaWeatherBot.Models;
 
 namespace WhatDaWeatherBot.Weather
 {
@@ -8,9 +9,7 @@ namespace WhatDaWeatherBot.Weather
         Task<CurrentWeather> GetCurrentAsync(
             string locationQuery, CancellationToken cancellationToken);
 
-        Task<WeatherForecast> GetForecastAsync(string locationQuery, CancellationToken cancellationToken);
-
-        Task<WeatherConditions> GetCurrentConditionsAsync(
+        Task<WeatherForecast> GetForecastAsync(
             string locationQuery, CancellationToken cancellationToken);
     }
 }

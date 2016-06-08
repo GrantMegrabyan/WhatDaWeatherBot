@@ -1,4 +1,4 @@
-﻿namespace WhatDaWeatherBot.Weather
+﻿namespace WhatDaWeatherBot.Models
 {
     public class CurrentWeather : WeatherDataItem
     {

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace WhatDaWeatherBot.Weather
+namespace WhatDaWeatherBot.Models
 {
     public class WeatherForecast
     {

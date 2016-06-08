@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using WhatDaWeatherBot.Models;
 
 namespace WhatDaWeatherBot.Weather
 {
@@ -103,39 +104,6 @@ namespace WhatDaWeatherBot.Weather
 
                 return sb.ToString();
             }
-        }
-
-
-
-
-
-        public string Build(Forecast forecast)
-        {
-            var response = new StringBuilder($"Forecast in {forecast.City}, {forecast.Country} for 24 hours:");
-            response.AppendLine(Environment.NewLine);
-
-            forecast.Items.ForEach(f =>
-            {
-                var date = f.ForecastOn.ToString("d");
-                var time = f.ForecastOn.ToString("t");
-                if (time.Length == 4)
-                {
-                    time = $"0{time}";
-                }
-
-                var datetime = $"{time}";
-                response.Append($"{datetime}: {f.Temperature:0.0}°C, {f.Description}");
-                response.AppendLine(Environment.NewLine);
-            });
-
-            return response.ToString();
-        }
-
-        public string Build(WeatherConditions conditions)
-        {
-            var response = $"Now in {conditions.Location} | {conditions.Temperature.ToCelcius()} | {conditions.Description}";
-
-            return response;
         }
     }
 }

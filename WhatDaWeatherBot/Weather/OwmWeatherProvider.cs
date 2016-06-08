@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using WhatDaWeatherBot.Models;
 
 namespace WhatDaWeatherBot.Weather
 {
@@ -32,32 +33,7 @@ namespace WhatDaWeatherBot.Weather
 
             return _responseParser.ParseCurrentWeather(json);
         }
-
-        public async Task<WeatherConditions> GetCurrentConditionsAsync(
-            string locationQuery, CancellationToken cancellationToken)
-        {
-            var url = BuildCurrentUrl(locationQuery);
-            var json = await ExecuteApiCall(url);
-
-            var location = new Location(json["name"].ToString(), json["sys"]["country"].ToString());
-            var description = json["weather"].First["description"];
-
-            var temp = Temperature.FromKelvin(decimal.Parse(json["main"]["temp"].ToString()));
-            var tempMin = Temperature.FromKelvin(decimal.Parse(json["main"]["temp_min"].ToString()));
-            var tempMax = Temperature.FromKelvin(decimal.Parse(json["main"]["temp_max"].ToString()));
-
-            var conditions = new WeatherConditions
-            {
-                Location = location,
-                Description = description,
-                Temperature = temp,
-                TemperatureMin = tempMin,
-                TemperatureMax = tempMax
-            };
-
-            return conditions;
-        }
-
+        
         public async Task<WeatherForecast> GetForecastAsync(
             string locationQuery, CancellationToken cancellationToken)
         {

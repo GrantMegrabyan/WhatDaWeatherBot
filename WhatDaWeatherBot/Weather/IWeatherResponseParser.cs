@@ -1,3 +1,5 @@
+using WhatDaWeatherBot.Models;
+
 namespace WhatDaWeatherBot.Weather
 {
     public interface IWeatherResponseParser

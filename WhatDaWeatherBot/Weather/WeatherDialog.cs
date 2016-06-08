@@ -9,6 +9,7 @@ using Microsoft.Bot.Builder.Luis;
 using Microsoft.Bot.Builder.Luis.Models;
 using WhatDaWeatherBot.General;
 using WhatDaWeatherBot.Helpers;
+using WhatDaWeatherBot.Models;
 
 namespace WhatDaWeatherBot.Weather
 {
@@ -24,8 +25,12 @@ namespace WhatDaWeatherBot.Weather
         [LuisIntent("")]
         public async Task None(IDialogContext context, LuisResult result)
         {
-            var query = result.Query;
-            var message = await WeatherHub.CheckWeather(query);
+            var query = new WeatherQuery
+            {
+                Location = result.Query
+            };
+
+            var message = await WeatherHub.GetWeather(query);
 
             await context.PostAsync(message);
             context.Wait(MessageReceived);
@@ -48,23 +53,11 @@ namespace WhatDaWeatherBot.Weather
 
             var locationEntity = result.Entities
                 .SingleOrDefault(a => a.Type == "builtin.weather.absolute_location");
-
-            var timeRangeEntity = result.Entities
-                .SingleOrDefault(a => a.Type == "builtin.weather.time_range");
-
+            
             var dateRangeEntity = result.Entities
                 .SingleOrDefault(a => a.Type == "builtin.weather.date_range");
 
             weatherQuery.Location = locationEntity?.Entity;
-
-            if (timeRangeEntity != null)
-            {
-                var fullTimeString = timeRangeEntity.Resolution["time"];
-                var indexOfT = fullTimeString.IndexOf("T", StringComparison.Ordinal);
-                var timeString = fullTimeString.Substring(indexOfT);
-
-                weatherQuery.TimeRange = TimeRange.Parse(timeString);
-            }
 
             if (dateRangeEntity != null)
             {
@@ -142,92 +135,6 @@ namespace WhatDaWeatherBot.Weather
             //    DateTime.Now.AddDays(1).Date, DateTime.Now.AddDays(5).Date);
             
             return weatherQuery;
-        }
-    }
-
-    public class WeatherQuery
-    {
-        public string Location { get; set; }
-        public DateRange DateRange { get; set; }
-        public TimeRange TimeRange { get; set; }
-
-        public bool IsForDate => DateRange != null;
-    }
-
-    public class DateRange
-    {
-        public DateRange()
-        {
-            
-        }
-
-        //public DateRange(DateTime start, DateTime end)
-        //{
-        //    Start = start;
-        //    End = end;
-        //}
-
-        public string Name { get; set; }
-
-        public long StartTs { get; set; }
-        public long EndTs { get; set; }
-
-        //public DateTime Start { get; set; }
-        //public DateTime End { get; set; }
-
-        public DateTimeOffset Start => DateTimeOffset.FromUnixTimeSeconds(StartTs);
-        public DateTimeOffset End => DateTimeOffset.FromUnixTimeSeconds(EndTs);
-
-        private static TimeSpan Day => new TimeSpan(1, 0, 0, 0);
-
-        //public bool IsOneDay => Start.Date == End.Date;
-        public bool IsOneDay => EndTs - StartTs <= Day.TotalSeconds;
-
-        public override string ToString()
-        {
-            if (!string.IsNullOrEmpty(Name))
-            {
-                return Name;
-            }
-
-            if (IsOneDay)
-            {
-                return Start.ToString();
-            }
-            else
-            {
-                return $"{Start} - {End}";
-            }
-        }
-    }
-
-    public class TimeRange
-    {
-        public TimeSpan Start { get; set; }
-        public TimeSpan End { get; set; }
-
-        public static TimeRange Parse(string timeString)
-        {
-            int hour;
-            if (int.TryParse(timeString, out hour))
-            {
-                var time = new TimeSpan(hour, 0, 0);
-                return new TimeRange {Start = time, End = time};
-            }
-
-            switch (timeString)
-            {
-                case "MO":
-                    return new TimeRange {Start = new TimeSpan(0, 6, 0), End = new TimeSpan(0, 12, 0)};
-
-                case "AF":
-                    return new TimeRange {Start = new TimeSpan(0, 12, 0), End = new TimeSpan(0, 18, 0)};
-
-                case "EV":
-                    return new TimeRange {Start = new TimeSpan(0, 18, 0), End = new TimeSpan(0, 24, 0)};
-            }
-
-            return new TimeRange {Start = new TimeSpan(0, 0, 0), End = new TimeSpan(0, 24, 0)};
         }
     }
 }

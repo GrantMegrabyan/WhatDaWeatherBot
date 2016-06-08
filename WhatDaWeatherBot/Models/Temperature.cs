@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Web.DynamicData;
 
-namespace WhatDaWeatherBot.Weather
+namespace WhatDaWeatherBot.Models
 {
     public class Temperature : IComparable, IComparable<Temperature>
     {
